@@ -1,0 +1,23 @@
+#!/bin/bash
+# GlobalDocs Document Processor - Mac Launcher
+# Double-click this .app to launch the application
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+JAR="$DIR/../globaldocs-document-processor-1.0.0.jar"
+
+# Check if Java is available
+if ! command -v java &> /dev/null; then
+    osascript -e 'display dialog "Java is not installed or not in PATH.\n\nPlease install Java 17 or later from:\nhttps://adoptium.net/" buttons {"OK"} default button "OK" with title "GlobalDocs - Java Required" with icon caution'
+    exit 1
+fi
+
+# Get Java version and check if >= 17
+JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f1)
+if [ "$JAVA_VERSION" -lt 17 ] 2>/dev/null; then
+    osascript -e "display dialog \"Java 17 or later is required.\n\nCurrent version: $JAVA_VERSION\n\nPlease install Java 17+ from:\nhttps://adoptium.net/\" buttons {\"OK\"} default button \"OK\" with title \"GlobalDocs - Java Version Too Old\" with icon caution"
+    exit 1
+fi
+
+# Launch the application
+cd "$(dirname "$0")"
+java -jar "$JAR" &
